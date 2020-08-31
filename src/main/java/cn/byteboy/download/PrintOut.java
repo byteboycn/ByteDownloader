@@ -27,15 +27,15 @@ public class PrintOut extends Thread implements DownloadService {
     private final long INTERVAL = 100;
 
 
-    private List<Downloader> downloaderList;
+    private List<BIODownloader> downloaderList;
 
     private ProgressBar bar = new ProgressBar();
 
 
-    public PrintOut(List<Downloader> downloaderList) {
+    public PrintOut(List<BIODownloader> downloaderList) {
         super("PrintOut");
         this.downloaderList = downloaderList;
-        for (Downloader downloader : downloaderList) {
+        for (BIODownloader downloader : downloaderList) {
             byteSum += downloader.getByteSum();
         }
     }
@@ -89,7 +89,7 @@ public class PrintOut extends Thread implements DownloadService {
     @Override
     public double getPercent() {
         long readSum = 0L;
-        for (Downloader downloader : downloaderList) {
+        for (BIODownloader downloader : downloaderList) {
             readSum += downloader.getReadByteSum();
         }
         // 刷新总读取量，放在这，不合理
@@ -100,7 +100,7 @@ public class PrintOut extends Thread implements DownloadService {
     @Override
     public double getSpeed() {
         double s = 0d;
-        for (Downloader downloader : downloaderList) {
+        for (BIODownloader downloader : downloaderList) {
             s += downloader.getAverageSpeed();
         }
         return s;

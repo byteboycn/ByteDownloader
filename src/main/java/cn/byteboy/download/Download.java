@@ -89,14 +89,14 @@ public class Download {
 
     public void download() {
         CountDownLatch latch = new CountDownLatch(nThread);
-        List<Downloader> downloaderList = new ArrayList<>(nThread);
+        List<BIODownloader> downloaderList = new ArrayList<>(nThread);
         for (DataPacket dataPacket : dataPackets) {
-            Downloader downloader = new Downloader(serverPath, localPath, dataPacket, latch);
+            BIODownloader downloader = new BIODownloader(serverPath, localPath, dataPacket, latch);
             downloader.addObserver(dataPacket);
             downloaderList.add(downloader);
         }
         new PrintOut(downloaderList).start();
-        for (final Downloader downloader : downloaderList) {
+        for (final BIODownloader downloader : downloaderList) {
             new Thread(downloader::download).start();
         }
         try {

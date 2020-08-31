@@ -15,6 +15,9 @@ public class DownloadTask implements Serializable {
 
     private static final long serialVersionUID = 8241970228716425282L;
 
+    // 任务id
+    private String id;
+
     // 任务状态
     private int statue;
 
