@@ -2,7 +2,9 @@ package cn.byteboy.download;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author Hong Shaochuan
@@ -69,6 +71,7 @@ public class DownloadTask implements Serializable {
         this.nThread = nThread;
         this.serverPath = serverPath;
         this.localPath = localPath;
+        this.dataPackets = new CopyOnWriteArrayList<>();
     }
 
 
@@ -127,6 +130,14 @@ public class DownloadTask implements Serializable {
 
     public void setDataPackets(List<DataPacket> dataPackets) {
         this.dataPackets = dataPackets;
+    }
+
+
+    public void addDataPacket(DataPacket packet) {
+        if (dataPackets.size() >= nThread) {
+            throw new RuntimeException("我都满了，不能再添加了");
+        }
+        dataPackets.add(packet);
     }
 
 }
