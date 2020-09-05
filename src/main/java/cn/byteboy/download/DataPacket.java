@@ -1,8 +1,8 @@
 package cn.byteboy.download;
 
-import java.util.Observable;
-import java.util.Observer;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author Hong Shaochuan
@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * 数据包描述
  */
-public class DataPacket implements Observer {
+public class DataPacket {
 
     // 起点索引
     private Long startIndex;
@@ -27,6 +27,8 @@ public class DataPacket implements Observer {
 
     // 百分比
     private Double percent;
+
+    private final Lock lock = new ReentrantLock();
 
     public DataPacket(long startIndex, long endIndex) {
         if (endIndex < startIndex || startIndex < 0) {
@@ -62,19 +64,14 @@ public class DataPacket implements Observer {
         this.byteSum = byteSum;
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-        if (arg instanceof Long || arg instanceof Integer) {
-            int len = (int) arg;
-            long read = readByteSum.addAndGet(len);
-            this.percent = read / 1d / byteSum * 100d;
-        }
-
+    public Lock getLock() {
+        return lock;
     }
 
+    // 更新已读字节数
     public void update(long len) {
-//        long read = readByteSum.addAndGet(len);
-//        this.percent = read / 1d / byteSum * 100d;
+        long read = readByteSum.addAndGet(len);
+        this.percent = read / 1d / byteSum * 100d;
     }
 
     public long getReadByteSum() {

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author Hong Shaochuan
@@ -18,21 +20,26 @@ public class DownloadManager {
     // 下载任务
     private List<DownloadTask> downloadTasks;
 
+    private final ExecutorService threadPool = Executors.newFixedThreadPool(30);
+
     public DownloadManager() {
         downloadTasks = new CopyOnWriteArrayList<>();
     }
 
-    public void addTask(DownloadTask task) {
+    public DownloadManager addTask(DownloadTask task) {
         downloadTasks.add(task);
+        return this;
     }
 
     public void start() {
         for (DownloadTask task : downloadTasks) {
             parseTask(task);
         }
+        download();
 
     }
 
+    // 解析任务
     private void parseTask(DownloadTask task) {
         try {
             URL url = new URL(task.getServerPath());
@@ -65,26 +72,18 @@ public class DownloadManager {
         }
     }
 
-
-
-
     public void download() {
-        CountDownLatch latch = new CountDownLatch(nThread);
-        List<BIODownloader> downloaderList = new ArrayList<>(nThread);
-        for (DataPacket dataPacket : dataPackets) {
-            BIODownloader downloader = new BIODownloader(serverPath, localPath, dataPacket, latch);
-            downloader.addObserver(dataPacket);
-            downloaderList.add(downloader);
-        }
-        new PrintOut(downloaderList).start();
-        for (final BIODownloader downloader : downloaderList) {
-            new Thread(downloader::download).start();
-        }
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        for (DownloadTask task : downloadTasks) {
+            if (task.getStatue() == DownloadTask.CREATED) {
+                task.setStatue(DownloadTask.RUNNING);
+                for (int i = 0; i < task.getNThread(); i++) {
+                    threadPool.submit(new BIODownloader(task));
+                }
+            }
         }
     }
+
+
+
 
 }

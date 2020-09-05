@@ -13,4 +13,17 @@
         <maven.compiler.source>1.8</maven.compiler.source>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>io.termd</groupId>
+            <artifactId>termd-core</artifactId>
+            <version>1.1.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sshd</groupId>
+            <artifactId>sshd-core</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+    </dependencies>
+
 </project>

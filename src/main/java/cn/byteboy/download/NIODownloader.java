@@ -7,4 +7,23 @@ package cn.byteboy.download;
  */
 public class NIODownloader implements Downloader {
 
+    @Override
+    public double getSpeed() {
+        return 0;
+    }
+
+    @Override
+    public double getAverageSpeed() {
+        return 0;
+    }
+
+    @Override
+    public double getPercent() {
+        return 0;
+    }
+
+    @Override
+    public long getByteSum() {
+        return 0;
+    }
 }

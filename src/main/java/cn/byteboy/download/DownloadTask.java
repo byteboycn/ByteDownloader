@@ -21,7 +21,7 @@ public class DownloadTask implements Serializable {
     private String id;
 
     // 任务状态
-    private int statue;
+    private volatile int statue;
 
     // 已创建
     transient static final int CREATED = 1;
@@ -72,6 +72,7 @@ public class DownloadTask implements Serializable {
         this.serverPath = serverPath;
         this.localPath = localPath;
         this.dataPackets = new CopyOnWriteArrayList<>();
+        this.statue = CREATED;
     }
 
 
